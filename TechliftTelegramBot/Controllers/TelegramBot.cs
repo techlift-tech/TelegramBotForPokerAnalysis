@@ -11,6 +11,7 @@ using Telegram.Bot.Args;
 using Newtonsoft.Json;
 using System.Web;
 using TechliftTelegramBot.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace TechliftTelegramBot.Controllers
 {
@@ -19,7 +20,12 @@ namespace TechliftTelegramBot.Controllers
     [ApiController]
     public class telegramBot : ControllerBase
     {
-        //botClient = new TelegramBotClient("1770785118:AAF6d9W3xbI1G4n-EW4Nz4MiK6BgdjM9EN0");
+        IConfiguration _config;
+        public telegramBot(IConfiguration config)
+        {
+            _config = config;
+        }
+       
         [HttpGet]
         public IActionResult Get()
         {
@@ -30,7 +36,7 @@ namespace TechliftTelegramBot.Controllers
         public IActionResult Post(JObject payload)
         {
             var privatechat = payload.ToObject<NewMessage>();
-            var botClient = new TelegramBotClient("1770785118:AAF6d9W3xbI1G4n-EW4Nz4MiK6BgdjM9EN0");
+            var botClient = new TelegramBotClient(_config["APIToken"]);
             var me = botClient.GetMeAsync().Result;
             Console.WriteLine(
               $"Hello, World! I am user {me.Username} and my name is {me.FirstName}.");
