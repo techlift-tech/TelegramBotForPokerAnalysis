@@ -18,10 +18,10 @@ namespace TechliftTelegramBot.Controllers
 
     [Route("api/[controller]")]
     [ApiController]
-    public class PascalCase : ControllerBase
+    public class TelegramBot : ControllerBase
     {
         IConfiguration _config;
-        public PascalCase(IConfiguration config)
+        public TelegramBot(IConfiguration config)
         {
             _config = config;
         }
