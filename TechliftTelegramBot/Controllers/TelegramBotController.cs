@@ -6,11 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.Passport;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using Newtonsoft.Json;
 using System.Web;
-using TechliftTelegramBot.Models;
 using Microsoft.Extensions.Configuration;
 
 namespace TechliftTelegramBot.Controllers
@@ -33,41 +34,40 @@ namespace TechliftTelegramBot.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post(JObject payload)
+        public IActionResult Post(Telegram.Bot.Types.Update update)
         {
-            var privatechat = payload.ToObject<NewMessage>();
+            Console.WriteLine(update.Message.Chat.Type);
             var botClient = new TelegramBotClient(_config["APIToken"]);
             var me = botClient.GetMeAsync().Result;
             Console.WriteLine(
               $"Hello, World! I am user {me.Username} and my name is {me.FirstName}.");
-            if (privatechat.Message != null)
+           
+            if (update.Message != null)
             {
-                if (privatechat.Message.Text == "/hello")
+                if (update.Message.Text == "/hello")
                 {
                     botClient.SendTextMessageAsync(
-                        chatId: privatechat.Message.Chat.Id,
-                        text: "hello " + privatechat.Message.From.FirstName);
+                        chatId: update.Message.Chat.Id,
+                        text: "hello " + update.Message.From.FirstName);
                 }
-               
-                else if (privatechat.Message.Text == "tell me time")
+                else if (update.Message.Text == "tell me time")
                 {
                     botClient.SendTextMessageAsync(
-                        chatId: privatechat.Message.Chat.Id,
+                        chatId: update.Message.Chat.Id,
                         text: "Current time is = " + DateTime.Now.ToString("h:mm:ss tt"));
                 }
-           
-                else if (privatechat.Message.Text != null)
+                else if (update.Message.Text != null)
                 {
-                    if (privatechat.Message.Text.StartsWith("/"))
+                    if (update.Message.Text.StartsWith("/"))
                     {
                         botClient.SendTextMessageAsync(
-                            chatId: privatechat.Message.Chat.Id,
-                            text: "hello " + privatechat.Message.From.FirstName + " you said \n" + privatechat.Message.Text);
+                            chatId: update.Message.Chat.Id,
+                            text: "hello " + update.Message.From.FirstName + " you said \n" + update.Message.Text);
                     }
-                    return Ok(payload.ToString());
+                    return Ok(update.ToString());
                 }
             }
-            return Ok(payload.ToString());
+            return Ok(update.ToString());
         }
     }
 }
