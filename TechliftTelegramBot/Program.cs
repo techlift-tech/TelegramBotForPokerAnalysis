@@ -25,7 +25,11 @@ namespace TechliftTelegramBot
                 try
                 {
                     var myDependency = services.GetRequiredService<IBotCommandCheckService>();
-                    myDependency.CheckCommands();
+                    var timer = new System.Threading.Timer(
+                        e => myDependency.CheckCommands(),
+                        null,
+                        TimeSpan.Zero,
+                        TimeSpan.FromHours(1));
                 }
                 catch (Exception ex)
                 {

@@ -47,7 +47,5 @@ namespace TechliftTelegramBot.Services
 
             }
         }
-
-        
     }
 }
