@@ -18,7 +18,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 using Newtonsoft.Json;
 using System.Web;
 using Microsoft.Extensions.Configuration;
-using TechliftTelegramBot.customClasses;
+using TechliftTelegramBot.Services;
 
 
 namespace TechliftTelegramBot.Controllers
@@ -29,10 +29,8 @@ namespace TechliftTelegramBot.Controllers
     public class TelegramBot : ControllerBase
     {
         IConfiguration _config;
-        //private ICommands Commands1;
-        public TelegramBot(IConfiguration config, ICommands commands)
+        public TelegramBot(IConfiguration config)
         {
-            //this.Commands1 = commands;
             _config = config;
         }
 

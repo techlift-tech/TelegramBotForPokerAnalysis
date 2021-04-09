@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
-namespace TechliftTelegramBot.customClasses
+namespace TechliftTelegramBot.Services
 {
-    public interface ICommands
+    public interface IBotCommandCheckService
     {
         public BotCommand[] commandsToBeSet { get; set; }
         public TelegramBotClient botClient { get; set; }
-        public void getCommands();
+        public void CheckCommands();
     }
 }

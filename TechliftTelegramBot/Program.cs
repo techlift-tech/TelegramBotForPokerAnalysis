@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TechliftTelegramBot.customClasses;
+using TechliftTelegramBot.Services;
 namespace TechliftTelegramBot
 {
     public class Program
@@ -15,8 +15,7 @@ namespace TechliftTelegramBot
         
         public static void Main(string[] args)
         {
-           
-            Console.WriteLine("Hello World");
+            Console.WriteLine("Application Started");
             var host = CreateHostBuilder(args).Build();
 
             using (var serviceScope = host.Services.CreateScope())
@@ -25,8 +24,8 @@ namespace TechliftTelegramBot
 
                 try
                 {
-                    var myDependency = services.GetRequiredService<ICommands>();
-                    myDependency.getCommands();
+                    var myDependency = services.GetRequiredService<IBotCommandCheckService>();
+                    myDependency.CheckCommands();
                 }
                 catch (Exception ex)
                 {
@@ -36,7 +35,6 @@ namespace TechliftTelegramBot
             }
 
             host.Run();
-            //CreateHostBuilder(args).Build().Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

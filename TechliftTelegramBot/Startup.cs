@@ -11,7 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TechliftTelegramBot.customClasses;
+using TechliftTelegramBot.Services;
 
 namespace TechliftTelegramBot
 {
@@ -29,7 +29,7 @@ namespace TechliftTelegramBot
         public void ConfigureServices(IServiceCollection services)
         {
             //services.AddSingleton(Commands,ICommands);
-             services.AddScoped<ICommands, Commands>();
+             services.AddScoped<IBotCommandCheckService, BotCommandCheckService>();
 
             services.AddControllers().AddNewtonsoftJson();
             services.AddSwaggerGen(c =>
