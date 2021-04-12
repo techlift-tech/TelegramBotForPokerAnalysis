@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,12 +11,15 @@ namespace TechliftTelegramBot.Services
 {
     public class BotCommandCheckService : IBotCommandCheckService
     {
-        IConfiguration _config;
+        private readonly ILogger _logger;
+        private readonly IConfiguration _config;
 
-        public BotCommandCheckService(IConfiguration config){
+        public BotCommandCheckService(ILogger<BotCommandCheckService> logger, IConfiguration config)
+        {
+            _logger = logger;
             _config = config;
         }
-        public BotCommand[] commandsToBeSet { get ; set ; }
+        public BotCommand[] commandsToBeSet { get; set; }
 
         public TelegramBotClient botClient { get; set; }
 
@@ -32,7 +36,7 @@ namespace TechliftTelegramBot.Services
 
             botClient = new TelegramBotClient(_config["APIToken"]);
             commandsToBeSet = botClient.GetMyCommandsAsync().Result;
-            
+
             for (int i = 0; i < AllCommands.Count(); ++i)
             {
                 if (commandsToBeSet.Any(a => a.Command == AllCommands.ElementAt(i).Command))

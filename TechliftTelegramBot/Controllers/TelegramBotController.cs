@@ -19,7 +19,7 @@ using Newtonsoft.Json;
 using System.Web;
 using Microsoft.Extensions.Configuration;
 using TechliftTelegramBot.Services;
-
+using Microsoft.Extensions.Logging;
 
 namespace TechliftTelegramBot.Controllers
 {
@@ -28,9 +28,12 @@ namespace TechliftTelegramBot.Controllers
     [ApiController]
     public class TelegramBot : ControllerBase
     {
-        IConfiguration _config;
-        public TelegramBot(IConfiguration config)
+        private readonly ILogger _logger;
+        private readonly IConfiguration _config;
+
+        public TelegramBot(ILogger<TelegramBot> logger, IConfiguration config)
         {
+            _logger = logger;
             _config = config;
         }
 
