@@ -13,6 +13,13 @@ namespace TechliftTelegramBot.Services
     {
         private readonly ILogger _logger;
         private readonly IConfiguration _config;
+        private readonly IEnumerable<BotCommand> AllCommands = new BotCommand[]
+            {
+                new BotCommand{Command="todays_profit",Description="get today's profit"},
+                new BotCommand{Command="remaining_limit",Description="get remaining limit"},
+                new BotCommand{Command="set_limit",Description="set limit of a user"},
+                new BotCommand{Command="week_profit",Description="get weekly profit"},
+            };
 
         public BotCommandCheckService(ILogger<BotCommandCheckService> logger, IConfiguration config)
         {
@@ -32,32 +39,24 @@ namespace TechliftTelegramBot.Services
 
         public TelegramBotClient botClient { get; set; }
 
-        private readonly IEnumerable<BotCommand> AllCommands = new BotCommand[]
-            {
-                new BotCommand{Command="todays_profit",Description="get today's profit"},
-                new BotCommand{Command="remaining_limit",Description="get remaining limit"},
-                new BotCommand{Command="set_limit",Description="set limit of a user"},
-                new BotCommand{Command="week_profit",Description="get weekly profit"},
-            };
-
         public void CheckCommands()
         {
 
             botClient = new TelegramBotClient(_config["APIToken"]);
             CommandsToBeSet= botClient.GetMyCommandsAsync().Result;
-
+            bool CommandsNeedToReset = false;
             for (int i = 0; i < AllCommands.Count(); ++i)
             {
-                if (CommandsToBeSet.Any(a => a.Command == AllCommands.ElementAt(i).Command))
+                if (CommandsToBeSet.Any(a => a.Command == AllCommands.ElementAt(i).Command) != true)
                 {
-                    Console.WriteLine("found the command: " + AllCommands.ElementAt(i).Command);
+                    CommandsNeedToReset = true;
+                    _logger.LogInformation($"command {AllCommands.ElementAt(i).Command} not found.");
                 }
-                else
-                {
-                    Console.WriteLine("command not found, registreting BotCommands");
-                    botClient.SetMyCommandsAsync(AllCommands);
-                }
-
+            }
+            if(CommandsNeedToReset == true)
+            {
+                _logger.LogInformation("some commands were not found, resetting commands.");
+                botClient.SetMyCommandsAsync(AllCommands);
             }
         }
     }
