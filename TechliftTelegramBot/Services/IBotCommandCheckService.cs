@@ -9,7 +9,9 @@ namespace TechliftTelegramBot.Services
 {
     public interface IBotCommandCheckService
     {
-        public BotCommand[] commandsToBeSet { get; set; }
+        BotCommand[] GetCommandsToBeSetVariable();
+        void SetCommandsToBeSetVariable(BotCommand[] value);
+
         public TelegramBotClient botClient { get; set; }
         public void CheckCommands();
     }

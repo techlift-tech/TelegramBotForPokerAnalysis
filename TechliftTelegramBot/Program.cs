@@ -17,16 +17,16 @@ namespace TechliftTelegramBot
         public static void Main(string[] args)
         {
             Console.WriteLine("Application Started");
-            var host = CreateHostBuilder(args).Build();
+            IHost host = CreateHostBuilder(args).Build();
 
-            using (var serviceScope = host.Services.CreateScope())
+            using (IServiceScope serviceScope = host.Services.CreateScope())
             {
-                var services = serviceScope.ServiceProvider;
+                IServiceProvider services = serviceScope.ServiceProvider;
 
                 try
                 {
-                    var myDependency = services.GetRequiredService<IBotCommandCheckService>();
-                    var timer = new System.Threading.Timer(
+                    IBotCommandCheckService myDependency = services.GetRequiredService<IBotCommandCheckService>();
+                    System.Threading.Timer timer = new(
                         e => myDependency.CheckCommands(),
                         null,
                         TimeSpan.Zero,
@@ -42,11 +42,9 @@ namespace TechliftTelegramBot
             host.Run();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
+        public static IHostBuilder CreateHostBuilder(string[] args)
+        {
+            return Host.CreateDefaultBuilder(args).ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>());
+        }
     }
 }

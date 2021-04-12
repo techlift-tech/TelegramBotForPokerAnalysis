@@ -47,8 +47,8 @@ namespace TechliftTelegramBot.Controllers
         [HttpPost]
         public IActionResult Post(Update update)
         {
-            var botClient = new TelegramBotClient(_config["APIToken"]);
-            var me = botClient.GetMeAsync().Result;
+            TelegramBotClient botClient = new(_config["APIToken"]);
+            User me = botClient.GetMeAsync().Result;
 
             Console.WriteLine(
               $"Hello, World! I am user {me.Username} and my name is {me.FirstName}.");

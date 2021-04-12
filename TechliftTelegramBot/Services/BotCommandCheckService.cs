@@ -19,11 +19,20 @@ namespace TechliftTelegramBot.Services
             _logger = logger;
             _config = config;
         }
-        public BotCommand[] commandsToBeSet { get; set; }
+
+        private BotCommand[] CommandsToBeSet;
+        public BotCommand[] GetCommandsToBeSetVariable()
+        {
+            return CommandsToBeSet;
+        }
+        public void SetCommandsToBeSetVariable(BotCommand[] value)
+        {
+            CommandsToBeSet = value;
+        }
 
         public TelegramBotClient botClient { get; set; }
 
-        IEnumerable<BotCommand> AllCommands = new BotCommand[]
+        private readonly IEnumerable<BotCommand> AllCommands = new BotCommand[]
             {
                 new BotCommand{Command="todays_profit",Description="get today's profit"},
                 new BotCommand{Command="remaining_limit",Description="get remaining limit"},
@@ -35,11 +44,11 @@ namespace TechliftTelegramBot.Services
         {
 
             botClient = new TelegramBotClient(_config["APIToken"]);
-            commandsToBeSet = botClient.GetMyCommandsAsync().Result;
+            CommandsToBeSet= botClient.GetMyCommandsAsync().Result;
 
             for (int i = 0; i < AllCommands.Count(); ++i)
             {
-                if (commandsToBeSet.Any(a => a.Command == AllCommands.ElementAt(i).Command))
+                if (CommandsToBeSet.Any(a => a.Command == AllCommands.ElementAt(i).Command))
                 {
                     Console.WriteLine("found the command: " + AllCommands.ElementAt(i).Command);
                 }
