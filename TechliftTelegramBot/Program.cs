@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TechliftTelegramBot.Models;
 using TechliftTelegramBot.Services;
 namespace TechliftTelegramBot
 {
@@ -31,10 +32,10 @@ namespace TechliftTelegramBot
                         TimeSpan.Zero,
                         TimeSpan.FromHours(1));
                 }
-                catch (Exception ex)
+                catch (Exception exception)
                 {
-                    var logger = services.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occurred.");
+                    ILogger<Program> logger = services.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(LogEvents.BotCommandCheckServiceTimerError, exception, @"Error in starting the BotCommandCheckService");
                 }
             }
 
