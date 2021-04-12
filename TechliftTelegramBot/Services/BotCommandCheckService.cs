@@ -13,6 +13,7 @@ namespace TechliftTelegramBot.Services
     {
         private readonly ILogger _logger;
         private readonly IConfiguration _config;
+        private readonly TelegramBotClient _botclient;
         private readonly IEnumerable<BotCommand> AllCommands = new BotCommand[]
             {
                 new BotCommand{Command="todays_profit",Description="get today's profit"},
@@ -20,11 +21,12 @@ namespace TechliftTelegramBot.Services
                 new BotCommand{Command="set_limit",Description="set limit of a user"},
                 new BotCommand{Command="week_profit",Description="get weekly profit"},
             };
-
+       
         public BotCommandCheckService(ILogger<BotCommandCheckService> logger, IConfiguration config)
         {
             _logger = logger;
             _config = config;
+            _botclient =new TelegramBotClient(_config["APIToken"]);
         }
 
         private BotCommand[] CommandsToBeSet;
@@ -37,13 +39,9 @@ namespace TechliftTelegramBot.Services
             CommandsToBeSet = value;
         }
 
-        public TelegramBotClient botClient { get; set; }
-
-        public void CheckCommands()
+        public async void CheckCommands()
         {
-
-            botClient = new TelegramBotClient(_config["APIToken"]);
-            CommandsToBeSet= botClient.GetMyCommandsAsync().Result;
+            CommandsToBeSet = await _botclient.GetMyCommandsAsync();
             bool CommandsNeedToReset = false;
             for (int i = 0; i < AllCommands.Count(); ++i)
             {
@@ -56,7 +54,11 @@ namespace TechliftTelegramBot.Services
             if(CommandsNeedToReset == true)
             {
                 _logger.LogInformation("some commands were not found, resetting commands.");
-                botClient.SetMyCommandsAsync(AllCommands);
+                await _botclient.SetMyCommandsAsync(AllCommands);
+            }
+            else
+            {
+                _logger.LogInformation("All commands are registered already");
             }
         }
     }

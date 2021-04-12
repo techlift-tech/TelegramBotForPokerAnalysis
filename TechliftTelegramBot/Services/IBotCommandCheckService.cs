@@ -11,8 +11,6 @@ namespace TechliftTelegramBot.Services
     {
         BotCommand[] GetCommandsToBeSetVariable();
         void SetCommandsToBeSetVariable(BotCommand[] value);
-
-        public TelegramBotClient botClient { get; set; }
         public void CheckCommands();
     }
 }

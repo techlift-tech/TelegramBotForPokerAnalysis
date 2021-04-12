@@ -35,6 +35,7 @@ namespace TechliftTelegramBot.Controllers
         {
             _logger = logger;
             _config = config;
+            
         }
 
         
@@ -43,11 +44,8 @@ namespace TechliftTelegramBot.Controllers
         public async Task<IActionResult> Post(Update update)
         {
             TelegramBotClient botClient = new(_config["APIToken"]);
-           
             User me = await botClient.GetMeAsync();
-            Console.WriteLine(
-              $"Hello, World! I am user {me.Username} and my name is {me.FirstName}.");
-
+            _logger.LogInformation($"Hello, World! I am user {me.Username} and my name is {me.FirstName}.");
             if (update.Message != null)
             {
                 if (update.Message.Text == "/hello")
