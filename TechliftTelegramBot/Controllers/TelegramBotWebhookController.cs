@@ -37,19 +37,14 @@ namespace TechliftTelegramBot.Controllers
             _config = config;
         }
 
-        [HttpGet]
-        public IActionResult Get()
-        {
-
-            return Ok("hello world");
-        }
+        
 
         [HttpPost]
-        public IActionResult Post(Update update)
+        public async Task<IActionResult> Post(Update update)
         {
             TelegramBotClient botClient = new(_config["APIToken"]);
-            User me = botClient.GetMeAsync().Result;
-
+           
+            User me = await botClient.GetMeAsync();
             Console.WriteLine(
               $"Hello, World! I am user {me.Username} and my name is {me.FirstName}.");
 
@@ -57,9 +52,8 @@ namespace TechliftTelegramBot.Controllers
             {
                 if (update.Message.Text == "/hello")
                 {
-                    botClient.SendTextMessageAsync(
-                        chatId: update.Message.Chat.Id,
-                        text: "hello " + update.Message.From.FirstName);
+                   await botClient.SendTextMessageAsync(
+                         chatId: update.Message.Chat.Id, text: "hello " + update.Message.From.FirstName) ;
                 }
             }
             return Ok("Message has been received.");
