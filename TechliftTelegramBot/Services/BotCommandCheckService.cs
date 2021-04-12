@@ -43,12 +43,12 @@ namespace TechliftTelegramBot.Services
         {
             CommandsToBeSet = await _botclient.GetMyCommandsAsync();
             bool CommandsNeedToReset = false;
-            for (int i = 0; i < AllCommands.Count(); ++i)
+            foreach (BotCommand botCommand in AllCommands)
             {
-                if (CommandsToBeSet.Any(a => a.Command == AllCommands.ElementAt(i).Command) != true)
+                if (CommandsToBeSet.Any(any => any.Command == botCommand.Command) != true)
                 {
                     CommandsNeedToReset = true;
-                    _logger.LogInformation($"command {AllCommands.ElementAt(i).Command} not found.");
+                    _logger.LogInformation($"command {botCommand.Command} not found.");
                 }
             }
             if(CommandsNeedToReset == true)
