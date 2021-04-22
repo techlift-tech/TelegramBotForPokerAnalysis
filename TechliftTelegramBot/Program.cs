@@ -7,8 +7,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TechliftTelegramBot.Controllers;
 using TechliftTelegramBot.Models;
 using TechliftTelegramBot.Services;
+using Telegram.Bot.Types;
+
 namespace TechliftTelegramBot
 {
     public class Program
