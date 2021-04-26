@@ -13,7 +13,6 @@ namespace TechliftTelegramBot.Services
         {
             InlineKeyboardButton[] keyboardButtons = new InlineKeyboardButton[_player.Count + 1];
             int count = (int)Math.Ceiling(((decimal)_player.Count + 1) / 2);
-            Console.WriteLine(count);
             InlineKeyboardButton[][] keyboardInline = new InlineKeyboardButton[count][];
             for (int i = 0; i < _player.Count; i++)
             {

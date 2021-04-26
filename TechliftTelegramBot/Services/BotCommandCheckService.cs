@@ -1,9 +1,11 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TechliftTelegramBot.Models;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
@@ -12,9 +14,10 @@ namespace TechliftTelegramBot.Services
     public class BotCommandCheckService : IBotCommandCheckService
     {
         private readonly ILogger _logger;
-        private readonly IConfiguration _config;
+        private readonly ApplicationConfiguration _config;
         private readonly TelegramBotClient _botclient;
-        private readonly IEnumerable<BotCommand> AllCommands = new BotCommand[]
+        private IEnumerable<BotCommand> CommandsToBeSet;
+        public IEnumerable<BotCommand> AllCommands = new BotCommand[]
             {
                 new BotCommand{Command="todays_profit",Description="get today's profit"},
                 new BotCommand{Command="remaining_limit",Description="get remaining limit"},
@@ -22,21 +25,11 @@ namespace TechliftTelegramBot.Services
                 new BotCommand{Command="week_profit",Description="get weekly profit"},
             };
        
-        public BotCommandCheckService(ILogger<BotCommandCheckService> logger, IConfiguration config)
+        public BotCommandCheckService(ILogger<BotCommandCheckService> logger, IOptions<ApplicationConfiguration> config)
         {
             _logger = logger;
-            _config = config;
-            _botclient =new TelegramBotClient(_config["APIToken"]);
-        }
-
-        private BotCommand[] CommandsToBeSet;
-        public BotCommand[] GetCommandsToBeSetVariable()
-        {
-            return CommandsToBeSet;
-        }
-        public void SetCommandsToBeSetVariable(BotCommand[] value)
-        {
-            CommandsToBeSet = value;
+            _config = config.Value;
+            _botclient =new TelegramBotClient(_config.APIToken);
         }
 
         public async void CheckCommands()

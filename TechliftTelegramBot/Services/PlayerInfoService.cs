@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using TechliftTelegramBot.Models;
@@ -13,20 +14,24 @@ using TechliftTelegramBot.Services;
 namespace TechliftTelegramBot.Services
 {
     
-    public class PlayerInfo
+    public class PlayerInfoService:IPlayerInfoService
     {
-        private readonly HttpClient client = new();
+        private readonly HttpClient _client;
         private List<Player> player = new();
-
-        public PlayerInfo()
+        private readonly ApplicationConfiguration _config;
+        public PlayerInfoService(IOptions<ApplicationConfiguration> config, IHttpClientFactory client)
         {
-            client.BaseAddress = new Uri("https://localhost:44390/");
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            _config = config.Value;
+            _client = client.CreateClient();
+            _client.BaseAddress = new Uri(_config.BaseAddress);
+            _client.DefaultRequestHeaders.Accept.Clear();
+            _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
+
+
         public async Task<List<Player>> GetPlayer(int agencyId)
         {
-            HttpResponseMessage response = await client.GetAsync($"/api/Player/{agencyId}");
+            HttpResponseMessage response = await _client.GetAsync($"/api/Player/{agencyId}");
             if (response.IsSuccessStatusCode)
             {
                 player = await response.Content.ReadAsAsync<List<Player>>();
@@ -51,5 +56,7 @@ namespace TechliftTelegramBot.Services
             }
             return player;
         }
+
+       
     }
 }

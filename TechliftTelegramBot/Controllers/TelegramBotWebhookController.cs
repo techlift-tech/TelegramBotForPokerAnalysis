@@ -9,47 +9,66 @@ using Microsoft.Extensions.Configuration;
 using TechliftTelegramBot.Services;
 using Microsoft.Extensions.Logging;
 using TechliftTelegramBot.Models;
-
+using Microsoft.Extensions.Options;
 
 namespace TechliftTelegramBot.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TelegramBot : ControllerBase
+    public class TelegramBotWebhookController : ControllerBase
     {
         private readonly ILogger _logger;
-        private readonly IConfiguration _config;
-        private readonly AgencyInfo agency = new();
-        private readonly PlayerInfo player = new();
-        private readonly TelegramBotClient botClient;
+        private readonly ApplicationConfiguration _config;
+        private readonly IAgencyInfoService _agency;
+        private readonly IPlayerInfoService _player;
+        private readonly TelegramBotClient _botClient;
         private readonly GenerateKeyboard generateKeyboard = new();
+        private readonly List<string> commands = new() { "/todays_profit", "/remaining_limit", "/set_limit", "/week_profit" };
 
-        public TelegramBot(ILogger<TelegramBot> logger, IConfiguration config)
+        public TelegramBotWebhookController(ILogger<TelegramBotWebhookController> logger, IOptions<ApplicationConfiguration> config, IAgencyInfoService agency,IPlayerInfoService player)
         {
             _logger = logger;
-            _config = config;
-            botClient = new(_config["APIToken"]);
+            _config = config.Value;
+            _botClient = new(_config.APIToken);
+            _agency = agency;
+            _player = player;
         }
-
+        
         [HttpPost]
         public async Task<IActionResult> Post(Update update)
         { 
-            User me = await botClient.GetMeAsync();
-
-            _logger.LogInformation($"Hello, World! I am user {me.Username} and my name is {me.FirstName}.");
-            
+            await _botClient.SendChatActionAsync(
+                        chatId: update.Message.From.Id,
+                        chatAction: Telegram.Bot.Types.Enums.ChatAction.Typing
+                        );
             if (update.Message != null)
             {
-                if (update.Message.Text == "/todays_profit")
+                if (commands.Contains(update.Message.Text))
                 {
-                    Agency _agency1 = await agency.GetAgency(update.Message.From.Id);
-                    Console.WriteLine(_agency1.id.ToString());
-                    List<Player> _player = await player.GetPlayer(_agency1.id);
-                    await botClient.SendTextMessageAsync(
+                    List<Player> Players = await _player.GetPlayer(_agency.GetAgency(update.Message.From.Id).Id);
+                    string text="";
+                    switch (update.Message.Text)
+                    {
+                        case "/todays_profit":
+                            text = "today's profit of Players";
+                            break;
+                        case "/remaining_limit":
+                            text = "remaining limit of Players";
+                            break;
+                        case "/set_limit":
+                            text = "select to set limit of Players";
+                            break;
+                        case "/week_profit":
+                            text = "select to set weekly limit of Players";
+                            break;
+                        default:
+                            break;
+                    }
+                    await _botClient.SendTextMessageAsync(
                           chatId: update.Message.Chat.Id,
-                          text: "Choose User to get todays_profit: ",
-                        replyMarkup: new InlineKeyboardMarkup(generateKeyboard.GetInlineKeyboard(_player))
-                     );
+                          text: text,
+                          replyMarkup: new InlineKeyboardMarkup(generateKeyboard.GetInlineKeyboard(Players))
+                     ) ;
                 }
             }
             return Ok("Message has been received.");
