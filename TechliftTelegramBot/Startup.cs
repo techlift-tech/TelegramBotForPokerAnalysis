@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
@@ -13,16 +14,17 @@ using System.Linq;
 using System.Threading.Tasks;
 using TechliftTelegramBot.Models;
 using TechliftTelegramBot.Services;
+using Telegram.Bot;
 
 namespace TechliftTelegramBot
 {
     public class Startup
     {
-        public IConfiguration _config;
+        private readonly IConfiguration _config;
 
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration config)
         {
-            _config = configuration;
+            _config = config;
         }
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -30,6 +32,8 @@ namespace TechliftTelegramBot
             services.AddScoped<IBotCommandCheckService, BotCommandCheckService>();
             services.AddScoped<IAgencyInfoService, AgencyInfoService>();
             services.AddScoped<IPlayerInfoService, PlayerInfoService>();
+            services.AddScoped<IGenerateKeyboard, GenerateKeyboard>();
+            services.AddSingleton<ITelegramBotClient>(new TelegramBotClient(_config.GetValue<string>("ApplicationConfiguration:APIToken")));
             services.Configure<ApplicationConfiguration>(this._config.GetSection("ApplicationConfiguration"));
             services.AddControllers().AddNewtonsoftJson();
             services.AddHttpClient();

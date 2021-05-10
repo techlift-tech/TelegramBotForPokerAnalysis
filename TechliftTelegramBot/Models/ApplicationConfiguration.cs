@@ -1,8 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Telegram.Bot;
 
 namespace TechliftTelegramBot.Models
 {
@@ -15,4 +17,5 @@ namespace TechliftTelegramBot.Models
         public string BaseAddress { get; set; }
 
     }
+
 }

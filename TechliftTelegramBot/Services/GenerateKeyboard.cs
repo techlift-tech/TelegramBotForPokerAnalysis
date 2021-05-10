@@ -7,7 +7,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace TechliftTelegramBot.Services
 {
-    public class GenerateKeyboard
+    public class GenerateKeyboard:IGenerateKeyboard
     {
         public InlineKeyboardButton[][] GetInlineKeyboard(List<Player> _player)
         {

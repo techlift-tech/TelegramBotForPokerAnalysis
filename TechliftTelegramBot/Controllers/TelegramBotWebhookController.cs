@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using Microsoft.Extensions.Configuration;
 using TechliftTelegramBot.Services;
@@ -21,32 +22,33 @@ namespace TechliftTelegramBot.Controllers
         private readonly ApplicationConfiguration _config;
         private readonly IAgencyInfoService _agency;
         private readonly IPlayerInfoService _player;
-        private readonly TelegramBotClient _botClient;
-        private readonly GenerateKeyboard generateKeyboard = new();
+        private readonly ITelegramBotClient _botClient;
+        private readonly IGenerateKeyboard _generateKeyboard;
         private readonly List<string> commands = new() { "/todays_profit", "/remaining_limit", "/set_limit", "/week_profit" };
 
-        public TelegramBotWebhookController(ILogger<TelegramBotWebhookController> logger, IOptions<ApplicationConfiguration> config, IAgencyInfoService agency,IPlayerInfoService player)
+        public TelegramBotWebhookController(ILogger<TelegramBotWebhookController> logger, IOptions<ApplicationConfiguration> config, IAgencyInfoService agency, IPlayerInfoService player, ITelegramBotClient botClient, IGenerateKeyboard generateKeyboard)
         {
             _logger = logger;
             _config = config.Value;
-            _botClient = new(_config.APIToken);
+            _botClient = botClient;
             _agency = agency;
             _player = player;
+            _generateKeyboard = generateKeyboard;
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> Post(Update update)
         { 
             await _botClient.SendChatActionAsync(
                         chatId: update.Message.From.Id,
-                        chatAction: Telegram.Bot.Types.Enums.ChatAction.Typing
+                        chatAction: ChatAction.Typing
                         );
-            if (update.Message != null)
+             if (update.Message != null)
             {
                 if (commands.Contains(update.Message.Text))
                 {
                     List<Player> Players = await _player.GetPlayer(_agency.GetAgency(update.Message.From.Id).Id);
-                    string text="";
+                    string text = string.Empty;
                     switch (update.Message.Text)
                     {
                         case "/todays_profit":
@@ -67,7 +69,7 @@ namespace TechliftTelegramBot.Controllers
                     await _botClient.SendTextMessageAsync(
                           chatId: update.Message.Chat.Id,
                           text: text,
-                          replyMarkup: new InlineKeyboardMarkup(generateKeyboard.GetInlineKeyboard(Players))
+                          replyMarkup: new InlineKeyboardMarkup(_generateKeyboard.GetInlineKeyboard(Players))
                      ) ;
                 }
             }
