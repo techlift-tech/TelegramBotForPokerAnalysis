@@ -1,10 +1,12 @@
 ﻿using Newtonsoft.Json;
+using System;
+
 namespace TechliftTelegramBot.Models
 {
     public partial class Player
     {
         [JsonProperty("Id")]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [JsonProperty("Name")]
         public string Name { get; set; }

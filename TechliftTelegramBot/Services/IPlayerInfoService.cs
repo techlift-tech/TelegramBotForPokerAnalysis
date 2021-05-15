@@ -8,6 +8,7 @@ namespace TechliftTelegramBot.Services
 {
     public interface IPlayerInfoService
     {
-        public Task<List<Player>> GetPlayer(int agencyId);
+        public Task<List<Player>> GetPlayer(Guid agencyId);
+        public Task<Player> GetPlayer(Guid agencyId, Guid playerId);
     }
 }

@@ -17,19 +17,14 @@ namespace TechliftTelegramBot.Services
         private readonly ApplicationConfiguration _config;
         private readonly TelegramBotClient _botclient;
         private IEnumerable<BotCommand> CommandsToBeSet;
-        public IEnumerable<BotCommand> AllCommands = new BotCommand[]
-            {
-                new BotCommand{Command="todays_profit",Description="get today's profit"},
-                new BotCommand{Command="remaining_limit",Description="get remaining limit"},
-                new BotCommand{Command="set_limit",Description="set limit of a user"},
-                new BotCommand{Command="week_profit",Description="get weekly profit"},
-            };
+        public IEnumerable<BotCommand> AllCommands;
        
         public BotCommandCheckService(ILogger<BotCommandCheckService> logger, IOptions<ApplicationConfiguration> config)
         {
             _logger = logger;
             _config = config.Value;
             _botclient =new TelegramBotClient(_config.APIToken);
+            AllCommands = config.Value.AllCommands;
         }
 
         public async void CheckCommands()

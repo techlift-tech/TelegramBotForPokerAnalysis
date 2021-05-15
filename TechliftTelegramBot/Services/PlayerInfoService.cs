@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-
 using System.Globalization;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -13,25 +12,24 @@ using TechliftTelegramBot.Services;
 
 namespace TechliftTelegramBot.Services
 {
-    
     public class PlayerInfoService:IPlayerInfoService
     {
-        private readonly HttpClient _client;
+        private readonly IHttpClientFactory _client;
         private List<Player> player = new();
         private readonly ApplicationConfiguration _config;
-        public PlayerInfoService(IOptions<ApplicationConfiguration> config, IHttpClientFactory client)
+        public PlayerInfoService(IOptions<ApplicationConfiguration> config, IHttpClientFactory factory)
         {
             _config = config.Value;
-            _client = client.CreateClient();
-            _client.BaseAddress = new Uri(_config.BaseAddress);
-            _client.DefaultRequestHeaders.Accept.Clear();
-            _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            _client = factory;
         }
 
-
-        public async Task<List<Player>> GetPlayer(int agencyId)
+        public async Task<List<Player>> GetPlayer(Guid agencyId)
         {
-            HttpResponseMessage response = await _client.GetAsync($"/api/Player/{agencyId}");
+            HttpClient client = _client.CreateClient("Player"); ;
+            client.BaseAddress = new Uri(_config.BaseAddress);
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            HttpResponseMessage response = await client.GetAsync($"/api/Player/{agencyId}");
             if (response.IsSuccessStatusCode)
             {
                 player = await response.Content.ReadAsAsync<List<Player>>();
@@ -40,23 +38,43 @@ namespace TechliftTelegramBot.Services
             {
                 player.Add(new Player()
                 {
-                    Id =1,
+                    Id = Guid.NewGuid(),
                     Name = "Player_1"
                 });
                 player.Add(new Player()
                 {
-                    Id = 2,
+                    Id = Guid.NewGuid(),
                     Name = "Player_2"
                 });
                 player.Add(new Player()
                 {
-                    Id = 3,
+                    Id = Guid.NewGuid(),
                     Name = "Player_3"
                 });
             }
             return player;
         }
-
-       
+        public async Task<Player> GetPlayer(Guid agencyId, Guid playerId)
+        {
+            HttpClient client = _client.CreateClient("Player"); ;
+            client.BaseAddress = new Uri(_config.BaseAddress);
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            HttpResponseMessage response = await client.GetAsync($"/api/Player/{agencyId}/{playerId}");
+            if (response.IsSuccessStatusCode)
+            {
+                Player player1 = await response.Content.ReadAsAsync<Player>();
+                return player1;
+            }
+            else
+            {
+                Player player1 = new()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Player_1"
+                };
+                return player1;
+            }
+        }
     }
 }

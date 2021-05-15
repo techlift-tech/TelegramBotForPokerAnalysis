@@ -1,14 +1,14 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Telegram.Bot;
 using Telegram.Bot.Types;
 
 namespace TechliftTelegramBot.Services
 {
-    public interface IBotCommandCheckService
+    public interface IUpdatesHandler
     {
-        public void CheckCommands();
+        public Task<bool> GetUpdates(Update update);
     }
 }

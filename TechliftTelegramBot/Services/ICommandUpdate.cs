@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Telegram.Bot;
 using Telegram.Bot.Types;
 
 namespace TechliftTelegramBot.Services
 {
-    public interface IBotCommandCheckService
+    public interface ICommandUpdate
     {
-        public void CheckCommands();
+        public Task GetPlayers(Update update);
     }
 }

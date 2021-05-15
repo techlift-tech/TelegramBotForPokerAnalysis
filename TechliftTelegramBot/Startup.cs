@@ -33,6 +33,9 @@ namespace TechliftTelegramBot
             services.AddScoped<IAgencyInfoService, AgencyInfoService>();
             services.AddScoped<IPlayerInfoService, PlayerInfoService>();
             services.AddScoped<IGenerateKeyboard, GenerateKeyboard>();
+            services.AddScoped<IUpdatesHandler, UpdatesHandler>();
+            services.AddScoped<ICommandUpdate, CommandUpdate>();
+            services.AddScoped<ICallbackQueryUpdate, CallbackQueryUpdate>();
             services.AddSingleton<ITelegramBotClient>(new TelegramBotClient(_config.GetValue<string>("ApplicationConfiguration:APIToken")));
             services.Configure<ApplicationConfiguration>(this._config.GetSection("ApplicationConfiguration"));
             services.AddControllers().AddNewtonsoftJson();

@@ -13,49 +13,40 @@ using Microsoft.Extensions.Logging;
 
 namespace TechliftTelegramBot.Services
 {
-    
     public class AgencyInfoService:IAgencyInfoService
     {
-        private readonly HttpClient _client;
+        private readonly IHttpClientFactory _client;
         private readonly ApplicationConfiguration _config;
         private readonly ILogger _logger;
-        private Agency agency=new();
-        public AgencyInfoService(IOptions<ApplicationConfiguration> config, ILogger<AgencyInfoService> logger, IHttpClientFactory client)
+        private Agency agency;
+        public AgencyInfoService(IOptions<ApplicationConfiguration> config, ILogger<AgencyInfoService> logger, IHttpClientFactory factory)
         {
             _config = config.Value;
             _logger = logger;
-            _client = client.CreateClient();
-            _client.BaseAddress = new Uri(_config.BaseAddress);
-            _client.DefaultRequestHeaders.Accept.Clear();
-            _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            _client = factory;
         }
 
         public async Task<Agency> GetAgency(int telegramId)
         {
-            try
+            HttpClient client = _client.CreateClient("agency");
+            client.BaseAddress = new Uri(_config.BaseAddress);
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            HttpResponseMessage response = await client.GetAsync($"/api/Agency/{telegramId}");
+            if (response.IsSuccessStatusCode)
             {
-                HttpResponseMessage response = await _client.GetAsync($"/api/Agency/{telegramId}");
-                if (response.IsSuccessStatusCode)
+                agency = await response.Content.ReadAsAsync<Agency>();
+                _logger.LogInformation("found agency related to telegram id");
+            }
+            else
+            {
+                agency = new()
                 {
-                    agency = await response.Content.ReadAsAsync<Agency>();
-                    if (agency.id == null)
-                    {
-                        throw new NullReferenceException("didn't get Agency data");
-                    }
-                }
-                else
-                {
-                    throw new ArgumentException("could not find agency related to this telegramId");
-                }
+                    Id = Guid.NewGuid(),
+                    AgencyName = "disha"
+                };
             }
-            catch(NullReferenceException exception)
-            {
-                _logger.LogError(exception.Message);
-            }
-            catch(ArgumentException exception)
-            {
-                _logger.LogError(exception.Message);
-            }
+            client.Dispose();
             return agency;
         }
     }
