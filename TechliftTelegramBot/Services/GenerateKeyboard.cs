@@ -35,5 +35,15 @@ namespace TechliftTelegramBot.Services
             }
             return keyboardInline;
         }
+
+        public InlineKeyboardButton[][] GetInlineKeyboardButtons(Dictionary<string, string> LimitTypes,Guid Player)
+        {
+            InlineKeyboardButton[][] inlineKeyboard = new InlineKeyboardButton[LimitTypes.Count][]; 
+            for (int i = 0; i < LimitTypes.Count; i++)
+            {
+                inlineKeyboard[i] = new InlineKeyboardButton[] { new InlineKeyboardButton { Text = LimitTypes.ElementAt(i).Key, CallbackData = LimitTypes.ElementAt(i).Value+","+Player.ToString() } };
+            }
+            return inlineKeyboard;
+        }
     }
 }

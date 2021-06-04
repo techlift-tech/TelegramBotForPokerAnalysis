@@ -24,7 +24,12 @@ namespace TechliftTelegramBot.Models
                 new BotCommand{Command="set_limit",Description="set limit of a user"},
                 new BotCommand{Command="weekly_profit",Description="get weekly profit"},
             };
-
-    }
+        public Dictionary<string,string> LimitTypes = new()
+        {
+            { "Today's Remaining Limit", "TodaysRemainingLimit" },
+            { "Week's Remaining Limit", "WeeksRamainingLimit" }
+        };
+            
+}
 
 }

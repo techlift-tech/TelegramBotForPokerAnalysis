@@ -45,12 +45,20 @@ namespace TechliftTelegramBot.Services
                         return;
                     }
                     List<Player> Players = await _player.GetPlayer(agency.Id);
+                    if (!Players.Any())
+                    {
+                        await _botClient.SendTextMessageAsync(
+                          chatId: update.Message.Chat.Id,
+                          text: "agency dont have any players");
+                        return;
+                    }
                     BotCommand cmd = AllCommands.FirstOrDefault(x =>  update.Message.Text.StartsWith(x.Command.ToString()));
                     await _botClient.SendTextMessageAsync(
                           chatId: update.Message.From.Id,
-                          text: cmd.Command.ToString()+" of Players",
+                          text: cmd.Command.ToString() + " of Players",
                           replyMarkup: new InlineKeyboardMarkup(_generateKeyboard.GetInlineKeyboard(Players))
                      );
+                    
                     return;
                 }
                 else

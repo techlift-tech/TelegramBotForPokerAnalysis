@@ -29,7 +29,7 @@ namespace TechliftTelegramBot.Services
             client.BaseAddress = new Uri(_config.BaseAddress);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            HttpResponseMessage response = await client.GetAsync($"/api/Player/{agencyId}");
+            HttpResponseMessage response = await client.GetAsync($"/mocks/telegrambot/bot:main/12898554/api/Player/{agencyId}");
             if (response.IsSuccessStatusCode)
             {
                 player = await response.Content.ReadAsAsync<List<Player>>();
@@ -54,26 +54,26 @@ namespace TechliftTelegramBot.Services
             }
             return player;
         }
-        public async Task<Player> GetPlayer(Guid agencyId, Guid playerId)
+        public async Task<List<Player>> GetPlayer(Guid agencyId, Guid playerId)
         {
             HttpClient client = _client.CreateClient("Player"); ;
             client.BaseAddress = new Uri(_config.BaseAddress);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            HttpResponseMessage response = await client.GetAsync($"/api/Player/{agencyId}/{playerId}");
+            HttpResponseMessage response = await client.GetAsync($"/mocks/telegrambot/bot:main/12898554/api/Player/{agencyId}/{playerId}");
             if (response.IsSuccessStatusCode)
             {
-                Player player1 = await response.Content.ReadAsAsync<Player>();
-                return player1;
+                player = await response.Content.ReadAsAsync<List<Player>>();
+                return player;
             }
             else
             {
-                Player player1 = new()
+                player.Add( new()
                 {
                     Id = Guid.NewGuid(),
                     Name = "Player_1"
-                };
-                return player1;
+                });
+                return player;
             }
         }
     }

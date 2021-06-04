@@ -32,11 +32,11 @@ namespace TechliftTelegramBot.Services
             client.BaseAddress = new Uri(_config.BaseAddress);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            HttpResponseMessage response = await client.GetAsync($"/api/Agency/{telegramId}");
+            HttpResponseMessage response = await client.GetAsync($"/mocks/telegrambot/bot:main/12898554/api/Agency/{telegramId}");
             if (response.IsSuccessStatusCode)
             {
                 agency = await response.Content.ReadAsAsync<Agency>();
-                _logger.LogInformation("found agency related to telegram id");
+                _logger.LogInformation("found agency related to telegram id"+agency.Id+agency.AgencyName);
             }
             else
             {

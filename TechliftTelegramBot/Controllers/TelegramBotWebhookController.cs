@@ -29,7 +29,6 @@ namespace TechliftTelegramBot.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(Update update)
         {
-
             return await _updatesHandler.GetUpdates(update) ? Ok("message received") : Ok("Unrecognized type or user");
         }  
     }

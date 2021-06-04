@@ -10,5 +10,6 @@ namespace TechliftTelegramBot.Services
     public interface IGenerateKeyboard
     {
         public InlineKeyboardButton[][] GetInlineKeyboard(List<Player> _player);
+        public InlineKeyboardButton[][] GetInlineKeyboardButtons(Dictionary<string,string> LimitTypes, Guid Player);
     }
 }
